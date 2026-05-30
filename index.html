@@ -92,10 +92,11 @@ function handleInput(e) {
                 alert("you lost")
             }
             else{
-                i["open"]=1
-                if (i["n"]===1){
-                    opencell()
+                
+                if (i["n"]===0){
+                    opencell(i["x"], i["y"])
                 }
+                else{i["open"]=1}
             }
 
         }
@@ -109,7 +110,7 @@ canvas.addEventListener("mousedown", handleInput);
 /* ============================================================
    GAME STATE
    ============================================================ */
-
+let x
 let grid = []
 for (x=0;x<10;x++){
     for(y=0;y<10;y++){
@@ -170,47 +171,51 @@ for (let i of grid){
     }
 }
 
-function opencell(){
+function opencell(x, y){
 
 for (let i of grid){
     for (let o of grid){
-        if(i["x"]===o["x"]+w && i["y"]===o["y"] && o["open"]!==1){
-            i["open"]=1
-            opencell()
-        }
-        if(i["x"]===o["x"]-w && i["y"]===o["y"] && o["open"]!==1){
-            i["open"]=1
-            opencell()
-        }
-        if(i["x"]===o["x"] && i["y"]===o["y"]+w && o["open"]!==1){
-            i["open"]=1
-            opencell()
-        }
-        if(i["x"]===o["x"] && i["y"]===o["y"]-w && o["open"]!==1){
-            i["open"]=1
-            opencell()
-        }
+        if (i["x"]===x && i["y"]===y && i["n"]===0)
+        {
+            if(i["x"]===o["x"]+w && i["y"]===o["y"] && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
+            if(i["x"]===o["x"]-w && i["y"]===o["y"] && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
+            if(i["x"]===o["x"] && i["y"]===o["y"]+w && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
+            if(i["x"]===o["x"] && i["y"]===o["y"]-w && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
 
-        if(i["x"]===o["x"]+w && i["y"]===o["y"]+w && o["open"]!==1){
-            i["open"]=1
-            opencell()
-        }
-        if(i["x"]===o["x"]+w && i["y"]===o["y"]-w && o["open"]!==1){
-            i["open"]=1
-            opencell()
-        }
-        if(i["x"]===o["x"]-w && i["y"]===o["y"]-w && o["open"]!==1){
-            i["open"]=1
-            opencell()
-        }
-        if(i["x"]===o["x"]-w && i["y"]===o["y"]+w && o["open"]!==1){
-            i["open"]=1
-            opencell()
+            if(i["x"]===o["x"]+w && i["y"]===o["y"]+w && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
+            if(i["x"]===o["x"]+w && i["y"]===o["y"]-w && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
+            if(i["x"]===o["x"]-w && i["y"]===o["y"]-w && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
+            if(i["x"]===o["x"]-w && i["y"]===o["y"]+w && o["open"]!==1){
+                i["open"]=1
+                opencell(o["x"], o["y"])
+            }
         }
     }
 }
 
 }
+
 /* ============================================================
    MAIN LOOP
    ============================================================ */
@@ -240,7 +245,20 @@ function game_loop() {
                 ctx.fillText(i["n"],i["x"], i["y"]+w/2)
             }
         }
-
+        
+    x=0
+    for (let i of grid){
+        if(i["open"]===1){
+            x=x+1
+        }
+        if(i["mine"]===1){
+            x=x+1
+        }
+    }
+    if(x===100){
+        ctx.fillStyle="#000000"
+        ctx.fillText("you won",200, 200)
+    }
     setTimeout(() => {
         requestAnimationFrame(game_loop);
     }, 50);
