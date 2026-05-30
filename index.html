@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>minesweeper</title>
+<style>
+    body {
+        margin: 0;
+        background: #111;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+        margin: auto;
+        background: black;
+        touch-action: none;
+        width: 100vw;
+        height: 100vh;
+    }
+</style>
+</head>
+<body>
+
+<canvas id="game"></canvas>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const WINDOW_WIDTH = 400;
+const WINDOW_HEIGHT = 400;
+const w = 40;
+const h = 40;
+
+/* ============================================================
+   GLOBALS
+   ============================================================ */
+const canvas = document.getElementById("game");
+canvas.width = WINDOW_WIDTH;
+canvas.height = WINDOW_HEIGHT;
+
+const ctx = canvas.getContext("2d");
+
+let running = true;
+let dir = "right";
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+const keys = {};
+
+window.addEventListener("keydown", (e) => {
+    keys[e.key] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key] = false;
+});
+
+/* ============================================================
+   UNIVERSAL INPUT (Single handler for Mouse + Touch)
+   ============================================================ */
+function handleInput(e) {
+    e.preventDefault();
+    
+    let clientX, clientY;
+    if (e.touches) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY; 
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;  
+    }
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;  
+    
+    // Scale coordinates to match canvas size
+    const scaleX = WINDOW_WIDTH / rect.width;
+    const scaleY = WINDOW_HEIGHT / rect.height;
+    const canvasX = x * scaleX;
+    const canvasY = y * scaleY;
+    
+    
+
+    for (let i of grid){
+
+        if ((i["x"] <= canvasX && canvasX <= i["x"]+w) && (i["y"] <= canvasY && canvasY <= i["y"]+w) && i["open"]===0) {
+            if(i["mine"]===1){
+                alert("you lost")
+            }
+            else{
+                i["open"]=1
+                if (i["n"]===1){
+                    opencell()
+                }
+            }
+
+        }
+    }
+    
+}
+
+canvas.addEventListener("touchstart", handleInput);
+canvas.addEventListener("mousedown", handleInput);
+
+/* ============================================================
+   GAME STATE
+   ============================================================ */
+
+let grid = []
+for (x=0;x<10;x++){
+    for(y=0;y<10;y++){
+        grid.push({
+            "x":x*w,
+            "y":y*w,
+            "mine":0,
+            "open":0,
+            "n":0
+        })
+    }
+}
+
+let mines=[]
+for (z=0; z<15;z++){
+    mines.push({
+        "x":(Math.floor(Math.random()*10))*w,
+        "y":(Math.floor(Math.random()*10))*w
+    })
+    
+}
+
+for (let i of grid){
+    for (let o of mines){
+        if(i["x"]===o["x"] && i["y"]===o["y"]){
+            i["mine"]=1;
+            i["n"]=9;
+        }
+    }
+}
+for (let i of grid){
+    for (let o of grid){
+        if(i["x"]===o["x"]+w && i["y"]===o["y"] && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+        if(i["x"]===o["x"]-w && i["y"]===o["y"] && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+        if(i["x"]===o["x"] && i["y"]===o["y"]+w && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+        if(i["x"]===o["x"] && i["y"]===o["y"]-w && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+
+        if(i["x"]===o["x"]+w && i["y"]===o["y"]+w && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+        if(i["x"]===o["x"]+w && i["y"]===o["y"]-w && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+        if(i["x"]===o["x"]-w && i["y"]===o["y"]-w && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+        if(i["x"]===o["x"]-w && i["y"]===o["y"]+w && o["mine"]===1){
+            i["n"]=i["n"]+1
+        }
+    }
+}
+
+function opencell(){
+
+for (let i of grid){
+    for (let o of grid){
+        if(i["x"]===o["x"]+w && i["y"]===o["y"] && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+        if(i["x"]===o["x"]-w && i["y"]===o["y"] && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+        if(i["x"]===o["x"] && i["y"]===o["y"]+w && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+        if(i["x"]===o["x"] && i["y"]===o["y"]-w && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+
+        if(i["x"]===o["x"]+w && i["y"]===o["y"]+w && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+        if(i["x"]===o["x"]+w && i["y"]===o["y"]-w && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+        if(i["x"]===o["x"]-w && i["y"]===o["y"]-w && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+        if(i["x"]===o["x"]-w && i["y"]===o["y"]+w && o["open"]!==1){
+            i["open"]=1
+            opencell()
+        }
+    }
+}
+
+}
+/* ============================================================
+   MAIN LOOP
+   ============================================================ */
+function game_loop() {
+    if (!running) return;
+        
+
+        /* ===== RENDER ===== */
+        //clear screen
+        ctx.fillStyle="#000000"
+        ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+
+        for (let i of grid){
+            if(i["mine"]===1){
+
+                ctx.fillStyle="#FF0000"
+                ctx.fillRect(i["x"], i["y"], w, h)
+            }
+            if(i["mine"]===0 && i["open"]===0){
+                ctx.fillStyle="#aaaaaa"
+                ctx.fillRect(i["x"], i["y"], w, h)
+            }
+            if(i["mine"]===0 && i["open"]===1){
+                ctx.fillStyle="#FFFFFF"
+                ctx.fillRect(i["x"], i["y"], w, h)
+                ctx.fillStyle="#000000"
+                ctx.fillText(i["n"],i["x"], i["y"]+w/2)
+            }
+        }
+
+    setTimeout(() => {
+        requestAnimationFrame(game_loop);
+    }, 50);
+}
+
+game_loop();
+</script>
+</body>
+</html>
