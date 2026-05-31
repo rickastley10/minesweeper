@@ -305,22 +305,27 @@ function game_loop() {
         //clear screen
         ctx.fillStyle="#000000"
         ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
-
+        
         for (let i of grid){
             if(i["mine"]===1){
                 if (win !== 2){ctx.fillStyle="#FF0000";ctx.fillRect(i["x"], i["y"], w, h);}
-                else if (win === 2){ctx.fillStyle="#aaaaaa";ctx.fillRect(i["x"]-2, i["y"]-2, w-4, h-4);}
+                else if (win === 2){ctx.fillStyle="#aaaaaa";ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-4);}
             }
             if(i["mine"]===0 && i["open"]===0){
                 ctx.fillStyle="#aaaaaa"
-                ctx.fillRect(i["x"]-2, i["y"]-2, w-4, h-4)
+                ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-4)
             }
             if(i["mine"]===0 && i["open"]===1){
-                ctx.fillStyle="#FFFFFF"
-                ctx.fillRect(i["x"]-2, i["y"]-2, w-4, h-4)
+                
                 if (i["n"]!== 0){
+                    ctx.fillStyle="#FFFFFF"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-4)
                     ctx.fillStyle="#000000"
-                    ctx.fillText(i["n"],i["x"], i["y"]+w/2)
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else{
+                    ctx.fillStyle="#FFFFFF"
+                    ctx.fillRect(i["x"], i["y"], w, h)
                 }
             }
         }
