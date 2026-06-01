@@ -35,7 +35,7 @@
    CONFIG
    ============================================================ */
 const WINDOW_WIDTH = 400;
-const WINDOW_HEIGHT = 400;
+const WINDOW_HEIGHT = 440;
 const w = 40;
 const h = 40;
 
@@ -96,19 +96,40 @@ function handleInput(e) {
     for (let i of grid){
 
         if ((i["x"] <= canvasX && canvasX <= i["x"]+w) && (i["y"] <= canvasY && canvasY <= i["y"]+w)) {
-            if(i["mine"]===1){
-                win=1
-            }
-            else{
-                
-                if (i["n"]===0){
-                    opencell(i["x"], i["y"])
+            pausetimer=0
+            if (mode===1){
+                if(i["mine"]===1){
+                    win=1
                 }
                 else{
-                    i["open"]=1
+                    
+                    if (i["n"]===0){
+                        opencell(i["x"], i["y"])
+                    }
+                    else{
+                        i["open"]=1
+                    }
                 }
             }
+            else if(mode===2){
+                if (i["flag"]===0){
+                    i["flag"]=1
+                }
+                else{
+                    i["flag"]=0
+                }
+                
+            }
+            
 
+        }
+    }
+    if(180 <= canvasX && canvasX <= 220 && 400 <= canvasY && canvasY <= 440){
+        if (mode===1){
+            mode=2
+        }
+        else if(mode===2){
+            mode=1
         }
     }
     
@@ -133,7 +154,8 @@ function reset(){
                     "y":y*w,
                     "mine":0,
                     "open":0,
-                    "n":0
+                    "n":0,
+                    "flag":0
                 })
             }
         }
@@ -187,10 +209,18 @@ function reset(){
 
 
         win=2;
+        pausetimer=1
+        counter=0
+        timer=0
         
 }
 
 let x=0;
+let pausetimer=1
+let counter=0
+let timer=0
+let mode=1; // mode 1 normal clicks 
+// mode 2 - flags
 let win=2;
 let grid = []
 for (x=0;x<10;x++){
@@ -200,7 +230,8 @@ for (x=0;x<10;x++){
             "y":y*w,
             "mine":0,
             "open":0,
-            "n":0
+            "n":0,
+            "flag":0
         })
     }
 }
@@ -306,7 +337,7 @@ function opencell(x, y){
 function game_loop() {
     if (!running) return;
         
-
+        ctx.font = "15px Arial";
         /* ===== RENDER ===== */
         //clear screen
         ctx.fillStyle="#000000"
@@ -323,19 +354,115 @@ function game_loop() {
             }
             if(i["mine"]===0 && i["open"]===1){
                 
-                if (i["n"]!== 0){
-                    ctx.fillStyle="#FFFFFF"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-4)
+                if (i["n"]=== 1){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillStyle="#0000FF"
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else if (i["n"]=== 2){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillStyle="#00FF00"
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else if (i["n"]=== 3){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillStyle="#FF0000"
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else if (i["n"]=== 4){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillStyle="#000055"
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else if (i["n"]=== 5){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillStyle="#550000"
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else if (i["n"]=== 6){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillStyle="#00aaaa"
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else if (i["n"]=== 7){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
                     ctx.fillStyle="#000000"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
-                else{
-                    ctx.fillStyle="#FFFFFF"
+                else if (i["n"]=== 8){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillStyle="#CCCCCC"
+                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                }
+                else if (i["n"]===0){
+                    ctx.fillStyle="#DDDDDD"
                     ctx.fillRect(i["x"], i["y"], w, h)
                 }
             }
+            if (i["flag"]===1){
+                if(i["open"]===1){
+                    ctx.fillStyle="#DDDDDD"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-4)
+                }
+                else{
+                    ctx.fillStyle="#aaaaaa"
+                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-4)
+                }
+                
+
+                ctx.fillStyle="#000000"
+                ctx.fillRect(i["x"]+8, i["y"]+30, 24, 8)
+
+                ctx.fillStyle="#000000"
+                ctx.fillRect(i["x"]+20, i["y"]+14, 4, 20)
+                ctx.fillStyle="#FF0000"
+                ctx.fillRect(i["x"]+10, i["y"]+10, 14, 8)
+
+            }
         }
-        
+    
+
+
+if(mode===2){
+    ctx.fillStyle="#DDDDDD"
+    ctx.fillRect(180+2, 400+2, w-4, h-4)    
+
+    ctx.fillStyle="#000000"
+    ctx.fillRect(180+8, 400+30, 24, 8)
+    ctx.fillStyle="#000000"
+    ctx.fillRect(180+20, 400+14, 4, 20)
+    ctx.fillStyle="#FF0000"
+    ctx.fillRect(180+10, 400+10, 14, 8)
+}
+else if(mode===1){
+    ctx.fillStyle="#DDDDDD"
+    ctx.fillRect(180+2, 400+2, w-4, h-4)
+
+    ctx.fillStyle="#000000"
+    ctx.fillRect(180+10, 400+10, w-20, h-20)
+    ctx.fillStyle="#000000"
+    ctx.fillRect(180+20, 400, 2, h)
+    ctx.fillStyle="#000000"
+    ctx.fillRect(180, 400+20, w, 2)
+    ctx.fillRect(180+20, 400, 2, h)
+    ctx.fillStyle="#000000"
+    ctx.fillRect(180+5, 400+5, 5, 5)
+    ctx.fillRect(180+30, 400+5, 5, 5)
+    ctx.fillRect(180+5, 400+30, 5, 5)
+    ctx.fillRect(180+30, 400+30, 5, 5)
+}
+    
+
+
+
     x=0
     for (let i of grid){
         if(i["open"]===1){
@@ -350,14 +477,42 @@ function game_loop() {
     }
 
 
+    if(pausetimer===0){
+        if (counter !== 20){
+            counter=counter+1
+        }
+        else{
+            counter=0
+            timer=timer+1
+        }
+        
+    }
+
+    ctx.font = "30px Arial";
+    ctx.fillStyle="#FF0000"
+    ctx.fillText(timer,80, 430)
+
     if (win===3){
+        ctx.font = "30px Arial";
         ctx.fillStyle="#000000"
         ctx.fillText("you won",200, 200)
+        ctx.font = "30px Arial";
+        ctx.fillStyle="#FF0000"
+        ctx.fillText("you won",200+2, 200+2)
+        pausetimer=1
+        
     }
     if (win===1){
+        ctx.font = "30px Arial";
         ctx.fillStyle="#000000"
         ctx.fillText("you lost",200, 200)
+        ctx.font = "30px Arial";
+        ctx.fillStyle="#FF0000"
+        ctx.fillText("you lost",200+2, 200+2)
+        pausetimer=1
+        
     }
+
     setTimeout(() => {
         requestAnimationFrame(game_loop);
     }, 50);
