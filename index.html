@@ -88,51 +88,64 @@ function handleInput(e) {
     const scaleY = WINDOW_HEIGHT / rect.height;
     const canvasX = x * scaleX;
     const canvasY = y * scaleY;
-    
-    if (win!==2){
-        reset()
-    }
-    
-    for (let i of grid){
+    if (menu===0){
 
-        if ((i["x"] <= canvasX && canvasX <= i["x"]+w) && (i["y"] <= canvasY && canvasY <= i["y"]+w)) {
-            pausetimer=0
-            if (mode===1){
-                if(i["mine"]===1){
-                    win=1
-                }
-                else{
-                    
-                    if (i["n"]===0){
-                        opencell(i["x"], i["y"])
+        
+        if (win!==2){
+            reset()
+        }
+        
+        for (let i of grid){
+
+            if ((i["x"] <= canvasX && canvasX <= i["x"]+w) && (i["y"] <= canvasY && canvasY <= i["y"]+w)) {
+                pausetimer=0
+                if (mode===1){
+                    if(i["mine"]===1){
+                        win=1
                     }
                     else{
-                        i["open"]=1
+                        
+                        if (i["n"]===0){
+                            opencell(i["x"], i["y"])
+                        }
+                        else{
+                            i["open"]=1
+                        }
                     }
                 }
-            }
-            else if(mode===2){
-                if (i["flag"]===0){
-                    i["flag"]=1
-                }
-                else{
-                    i["flag"]=0
+                else if(mode===2){
+                    if (i["flag"]===0){
+                        i["flag"]=1
+                    }
+                    else{
+                        i["flag"]=0
+                    }
+                    
                 }
                 
-            }
-            
 
+            }
+        }
+        if(180 <= canvasX && canvasX <= 220 && 400 <= canvasY && canvasY <= 440){
+            if (mode===1){
+                mode=2
+            }
+            else if(mode===2){
+                mode=1
+            }
+        }
+        if(350 <= canvasX && canvasX<= 400 && 400 <= canvasY && canvasY <= 440){
+            menu=1
+            
+        }
+
+
+    }
+    else if(menu===1){
+        if(350 <= canvasX && canvasX<= 400 && 400 <= canvasY && canvasY <= 440){
+            menu=0
         }
     }
-    if(180 <= canvasX && canvasX <= 220 && 400 <= canvasY && canvasY <= 440){
-        if (mode===1){
-            mode=2
-        }
-        else if(mode===2){
-            mode=1
-        }
-    }
-    
     
 }
 
@@ -155,7 +168,8 @@ function reset(){
                     "mine":0,
                     "open":0,
                     "n":0,
-                    "flag":0
+                    "flag":0,
+                    "selected":0
                 })
             }
         }
@@ -215,6 +229,7 @@ function reset(){
         
 }
 
+let menu=0
 let x=0;
 let pausetimer=1
 let counter=0
@@ -231,7 +246,8 @@ for (x=0;x<10;x++){
             "mine":0,
             "open":0,
             "n":0,
-            "flag":0
+            "flag":0,
+            "selected":0
         })
     }
 }
@@ -342,8 +358,16 @@ function game_loop() {
         //clear screen
         ctx.fillStyle="#000000"
         ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+        if (menu===0){    // MENU === 0
+            
         
+
+
         for (let i of grid){
+            if(i["selected"]===1){
+                ctx.fillStyle="#00ff00"
+                ctx.fillRect(i["x"], i["y"], w, h)
+            }
             if(i["mine"]===1){
                 if (win !== 2){ctx.fillStyle="#FF0000";ctx.fillRect(i["x"], i["y"], w, h);}
                 else if (win === 2){ctx.fillStyle="#aaaaaa";ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-4);}
@@ -356,49 +380,49 @@ function game_loop() {
                 
                 if (i["n"]=== 1){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#0000FF"
-                    ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
+                    ctx.fillText("1",i["x"]+w/2, i["y"]+w/2)
                 }
                 else if (i["n"]=== 2){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#00FF00"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
                 else if (i["n"]=== 3){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#FF0000"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
                 else if (i["n"]=== 4){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#000055"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
                 else if (i["n"]=== 5){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#550000"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
                 else if (i["n"]=== 6){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#00aaaa"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
                 else if (i["n"]=== 7){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#000000"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
                 else if (i["n"]=== 8){
                     ctx.fillStyle="#DDDDDD"
-                    ctx.fillRect(i["x"]+2, i["y"]+2, w-4, h-8)
+                    ctx.fillRect(i["x"]+6, i["y"]+2, w-8, h-8)
                     ctx.fillStyle="#CCCCCC"
                     ctx.fillText(i["n"],i["x"]+w/2, i["y"]+w/2)
                 }
@@ -427,6 +451,7 @@ function game_loop() {
                 ctx.fillRect(i["x"]+10, i["y"]+10, 14, 8)
 
             }
+            
         }
     
 
@@ -492,6 +517,10 @@ else if(mode===1){
     ctx.fillStyle="#FF0000"
     ctx.fillText(timer,80, 430)
 
+    ctx.font = "15px Arial";
+    ctx.fillStyle="#ff0000"
+    ctx.fillText("pause",350, 430)
+
     if (win===3){
         ctx.font = "30px Arial";
         ctx.fillStyle="#000000"
@@ -512,6 +541,27 @@ else if(mode===1){
         pausetimer=1
         
     }
+
+    }
+
+    if(menu===1){
+        ctx.font = "15px Arial";
+        ctx.fillStyle="#ff0000"
+        ctx.fillText("pause",350, 430)
+
+        ctx.font = "30px Arial";
+        ctx.fillStyle="#ff0000"
+        ctx.fillText("MINESWEEPER",100, 200)
+        ctx.font = "30px Arial";
+        ctx.fillStyle="#0000ff"
+        ctx.fillText("MINESWEEPER",100+4, 200+4)
+        ctx.font = "30px Arial";
+        ctx.fillStyle="#ffffff"
+        ctx.fillText("MINESWEEPER",100+2, 200+2)
+
+        
+    }
+
 
     setTimeout(() => {
         requestAnimationFrame(game_loop);
